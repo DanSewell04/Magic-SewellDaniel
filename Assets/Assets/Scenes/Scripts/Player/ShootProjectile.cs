@@ -5,20 +5,29 @@ using UnityEngine.SocialPlatforms;
 
 public class ShootProjectile : MonoBehaviour
 {
-    public GameObject projectile_Ability;
-    public float projectile_Speed = 20f;
-    public Transform ShootingPoint;
+    public float projectileSpeed = 5f;
+    public float projectileLifetime = 2f; // Adjust this as needed
 
+    private float timer = 0f;
 
-    private void Update()
+    void Start()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-          GameObject CurrentSpell = Instantiate(projectile_Ability, ShootingPoint.position, ShootingPoint.rotation);
-          Rigidbody2D rb = CurrentSpell.GetComponent<Rigidbody2D>();
-          CurrentSpell.transform.position = ShootingPoint.position;
-          rb.AddForce(ShootingPoint.transform.forward * projectile_Speed * Time.deltaTime, ForceMode2D.Impulse);
-        }
+        
+        Vector3 playerDirection = transform.localScale.x > 0 ? Vector3.right : Vector3.left;
+
+        // Shoot the projectile in the player's facing direction
+        GetComponent<Rigidbody2D>().velocity = playerDirection * projectileSpeed;
+
+        // Destroy the projectile after some time 
+        Destroy(gameObject, projectileLifetime);
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy"))
+        {
+            Destroy(collision.gameObject);
+            Destroy(gameObject);
+        }
+    }
 }
