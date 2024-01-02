@@ -7,8 +7,11 @@ public class ShootProjectile : MonoBehaviour
 {
     public float projectileSpeed = 5f;
     public float projectileLifetime = 2f; // Adjust this as needed
+    public AudioClip fireSound;
 
     private float timer = 0f;
+    private AudioSource audioSource;
+
 
     void Start()
     {
@@ -18,8 +21,17 @@ public class ShootProjectile : MonoBehaviour
         // Shoot the projectile in the player's facing direction
         GetComponent<Rigidbody2D>().velocity = playerDirection * projectileSpeed;
 
+        //Grabs audio source component
+        audioSource = GetComponent<AudioSource>();
+
         // Destroy the projectile after some time 
         Destroy(gameObject, projectileLifetime);
+
+        // Play the fire sound if an audio clip is assigned
+        if (fireSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(fireSound);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
